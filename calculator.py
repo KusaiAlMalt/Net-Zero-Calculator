@@ -6,7 +6,7 @@ import os
 app = FastAPI()
 
 cc_methods = {
-    'dac': {'name': 'Direct Air Capture', 'cost_per_ton': 500},
+    'dac': {'name': 'Direct Air Capture', 'cost_per_ton': 500}, # teoretisk data just nu kan vara nice att utöka med kostnadsdata från nätet
     'biochar': {'name': 'Biochar', 'cost_per_ton': 100},
     'reforestation': {'name': 'Reforestation', 'cost_per_ton': 50}
 }
