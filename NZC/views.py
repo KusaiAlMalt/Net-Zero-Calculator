@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 def index(request):
@@ -11,22 +11,22 @@ def pdf(request):
     return render(request, 'pdf.html')
 
 def manual(request):
-    return render(request, 'manual.html')
+    return render(request, 'manual.html', {"scopes" : [1,2,3]})
 
 def results(request):
-    if request.method == 'POST' and request.FILES.get('file'):   
-        results = f"you uploaded {request.FILES.get('file')}, and you should reduce your carbon footprint by x and y"
-        context = {
-            'results': results
-        }
-    elif request.method == 'POST' and request.POST.get('scope1') and request.POST.get('scope2') and request.POST.get('scope3') and request.POST.get('profit'):
-        results = f"you selected {request.POST.get('scope1')} and {request.POST.get('scope2')} and {request.POST.get('scope3')} and profit {request.POST.get('profit')}, and you should reduce your carbon footprint by x and y"
-        context = {
-            'results': results
-        }
+    if request.method == 'POST':
+        if request.FILES.get('file'):
+            results = f"you uploaded {request.FILES.get('file')}, and you should reduce your carbon footprint by x and y"
+            context = {
+                'results': results
+            }
+        elif request.POST.get('scope1') and request.POST.get('scope2') and request.POST.get('scope3') and request.POST.get('profit'):
+            scopes = [request.POST.get('scope1'), request.POST.get('scope2'), request.POST.get('scope3')]
+            profit = request.POST.get('profit')
+            results = f"you selected {scopes[0]} and {scopes[1]} and {scopes[2]} and profit {profit}, and you should reduce your carbon footprint by x and y"
+            context = {
+                'results': results
+            }
     else:
-        results = "Please upload a file or select a scope."
-        context = {
-            'results': results
-        }
+        return redirect('index')
     return render(request, 'results.html', context)
