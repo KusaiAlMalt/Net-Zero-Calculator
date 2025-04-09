@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Zero Calculator - Manual Input</title>
+</head>
+<body>
+
+    <header>
+        <h1>Net Zero Calculator</h1>
+        <nav>
+                <a href="about">About Us</a>
+        </nav>
+        <hr>    
+    </header>
+
+    <h3>Manual Data Input</h3>
+    <form action="results" method="POST">
+        {% csrf_token %}
+
+        <label for="scope1">Scope 1:</label>
+        <input type="number" name="scope1" id="scope1" required placeholder="enter a number"><br><br>
+
+        <label for="scope2">Scope 2:</label>
+        <input type="number" name="scope2" id="scope2" required placeholder="enter a number"><br><br>
+
+        <label for="scope3">Scope 3:</label>
+        <input type="number" name="scope3" id="scope3" required placeholder="enter a number"><br><br>
+
+        <label for="profit">Profit:</label>
+        <input type="number" name="profit" id="profit" required placeholder="enter a number"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+    <br><br>
+
+    <a href="/">Back to Home</a>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <hr>
+    <footer>
+        <p>&copy; 2025 Net Zero Calculator <a href="about">About</a></p>
+    </footer>
+</body>
