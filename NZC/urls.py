@@ -2,9 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'), #TODO: add index page
-    path('about', views.about, name='about'), #TODO: add about page
-    path('pdf', views.pdf, name='pdf'), #TODO: add pdf page
-    path('manual', views.manual, name='manual'), #TODO: add manual page
-    path('results', views.results, name='results'), #TODO: add results page
+    path('', views.index, name='index'),
+    path('about', views.about, name='about'),
+    path('pdf', views.pdf, name='pdf'), #TODO: add pdf page? confimation of data extracted from the pdf before submission
+    path('manual', views.manual, name='manual'),
+    path('results', views.results, name='results'),
 ]

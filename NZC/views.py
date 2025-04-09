@@ -14,13 +14,19 @@ def manual(request):
     return render(request, 'manual.html')
 
 def results(request):
-    if request.method == 'POST' and request.FILES['file']:   
+    if request.method == 'POST' and request.FILES.get('file'):   
         results = f"you uploaded {request.FILES.get('file')}, and you should reduce your carbon footprint by x and y"
         context = {
-            'results': results,
+            'results': results
+        }
+    elif request.method == 'POST' and request.POST.get('scope1') and request.POST.get('scope2') and request.POST.get('scope3') and request.POST.get('profit'):
+        results = f"you selected {request.POST.get('scope1')} and {request.POST.get('scope2')} and {request.POST.get('scope3')} and profit {request.POST.get('profit')}, and you should reduce your carbon footprint by x and y"
+        context = {
+            'results': results
         }
     else:
+        results = "Please upload a file or select a scope."
         context = {
-            'results': None,
+            'results': results
         }
     return render(request, 'results.html', context)
