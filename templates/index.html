@@ -19,6 +19,11 @@
     <p> Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
     
     <hr>
+
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+        
     
     <!-- PDF upload form -->
     <h3>Drop your report here!</h3>
