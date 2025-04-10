@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Zero Calcualtor</title>
+</head>
+<body>
+    
+    <header>
+        <h1>Net Zero Calculator</h1>
+        <nav>
+                <a href="about">About Us</a>
+        </nav>
+        <hr>    
+    </header>
+
+    <h3>Welcome to the Net Zero Calculator!</h3>
+    <p> Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
+    
+    <hr>
+
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+        
+    
+    <!-- PDF upload form -->
+    <h3>Drop your report here!</h3>
+    <form action="results" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="file">Choose a PDF:</label>
+        <input type="file" name="file" id="file" accept=".pdf" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Manual data input form -->
+    <h3>Click here for manual data input:</h3>
+    <a href="manual"><button type="submit">Manual data input</button></a>
+
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <hr>
+    <footer>
+        <p>&copy; 2025 Net Zero Calculator <a href="about">About</a></p>
+    </footer>
+</body>
