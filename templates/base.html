@@ -1,0 +1,29 @@
+<!--This is the base of all html files for our application-->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block title %}
+    {% endblock %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    
+    <header>
+        <h1>Net Zero Calculator</h1>
+    </header>
+    <nav>
+        <a href="about" class="text">About Us</a>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+    <hr>
+    <footer>
+        <p>&copy; 2025 Net Zero Calculator <a href="about">About</a></p>
+    </footer>
+</body>
