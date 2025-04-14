@@ -3,7 +3,9 @@ Your journey to a sustainable future starts here. This tool helps your business 
 
 ## How to run on your own machine
 Check the `requirements.txt` and `pip install -r requirements.txt`
-** Otherwise **
+
+**Or you can download the dependencies yourself**
+
 Don't forget to activate your virtual environment if you are using one
 
 The application uses the Django framework, run `pip install django` to install it
