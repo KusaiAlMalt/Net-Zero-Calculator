@@ -3,6 +3,20 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Python virtual environments
+venv/
+env/
+.env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*/ 
+.Python
+pyvenv.cfg
+pip-log.txt
+pip-delete-this-directory.txt
+
 # User-specific files
 *.rsuser
 *.suo
@@ -328,6 +342,15 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Django related
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+*.pot
+*.mo
+local_settings.py
 
 # Cake - Uncomment if you are using it
 # tools/**
