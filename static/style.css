@@ -13,6 +13,16 @@
     --line-height: 1.5;
 }
 
+html, body{
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    flex: 1;
+}
 
 body{
     background-color: var(--color-bg);
@@ -53,9 +63,20 @@ nav{
 .text-clickable:hover{
     color: var(--color-primary-accent);
 }
+
+
 footer {
-    margin-top: 3rem;
+    margin-top: auto;
     text-align: center;
     color: var(--color-text-accent);
-    font-size: 0.9rem;
+    font-size: 0.9rem;;
+    padding: 1rem 0;
+}
+
+footer p{
+    margin: 0.5rem 0;
+}
+
+footer a{
+    margin-left: 1rem;
 }
