@@ -13,10 +13,12 @@
 <body>
     
     <header>
-        <h1>Net Zero Calculator</h1>
+        <a href="/" id = "logo">
+            <h1>Net Zero Calculator</h1>
+        </a>
     </header>
     <nav>
-        <a href="about" class="text">About Us</a>
+        <a href="about" class="text-clickable">About Us</a>
     </nav>
 
     {% block content %}
@@ -24,6 +26,6 @@
 
     <hr>
     <footer>
-        <p>&copy; 2025 Net Zero Calculator <a href="about">About</a></p>
+        <p>&copy; 2025 Net Zero Calculator <a href="about" class="text-clickable"><small>About</small></a></p>
     </footer>
 </body>
