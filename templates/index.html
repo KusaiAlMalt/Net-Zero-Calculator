@@ -57,6 +57,23 @@
             const fileInput = document.getElementById('file');
             const feedback = document.getElementById('file-feedback');
 
+            function validateFile(file) {
+                if (file) {
+                    if (file.name.endsWith('.pdf')) {
+                        feedback.style.color = 'var(--color-primary-accent)';
+                        feedback.textContent = `File "${file.name}" is ready to upload.`;
+                    } else {
+                        feedback.style.color = 'red';
+                        feedback.textContent = 'Invalid file type. Please upload a PDF.';
+                        fileInput.value = '';
+                    }
+                    feedback.style.display = 'block';
+                } else {
+                    feedback.style.display = 'none';
+                }
+            }
+
+            // Handle drag-and-drop events
             dropArea.addEventListener('dragover', (event) => {
                 event.preventDefault();
                 dropArea.style.borderColor = 'var(--color-primary-accent)';
@@ -73,16 +90,15 @@
                 const files = event.dataTransfer.files;
                 if (files.length > 0) {
                     const file = files[0];
-                    if (file.name.endsWith('.pdf')) {
-                        fileInput.files = files;
-                        feedback.style.color = 'var(--color-primary-accent)';
-                        feedback.textContent = `File "${file.name}" is ready to upload.`;
-                    } else {
-                        feedback.style.color = 'red';
-                        feedback.textContent = 'Invalid file type. Please upload a PDF.';
-                    }
-                    feedback.style.display = 'block';
+                    fileInput.files = files;
+                    validateFile(file);
                 }
+            });
+
+            // Handle file input change event
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                validateFile(file);
             });
         });
     </script>
