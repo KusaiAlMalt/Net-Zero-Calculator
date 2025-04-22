@@ -22,6 +22,7 @@ html, body{
 
 main{
     flex: 1;
+    margin: 1rem;
 }
 
 body{
@@ -30,6 +31,25 @@ body{
     font-family: var(--font-family);
     line-height: var(--line-height);
 }
+
+body h3{
+    color: var(--color-text-accent);
+}
+
+button{
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease-in-out;
+}
+button:hover{
+    background-color: var(--color-primary-accent);
+}
+
 
 header{
     display: flex;
@@ -62,6 +82,10 @@ nav{
 }
 .text-clickable:hover{
     color: var(--color-primary-accent);
+}
+
+.text-center{
+    text-align: center;
 }
 
 
