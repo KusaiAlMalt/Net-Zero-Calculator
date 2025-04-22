@@ -103,6 +103,51 @@ input[type="number"]:focus{
     outline: none;
 }
 
+.container-row{
+    display: flex;
+    justify-content: space-around;
+}
+
+.middle-col{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#file-drop-area {
+    border: 2px dashed var(--color-secondary);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    background-color: var(--color-bg);
+    color: var(--color-text-accent);
+    cursor: pointer;
+    transition: border-color 0.3s ease-in-out;
+    margin: 1rem 0;
+}
+
+#file-drop-area:hover {
+    border-color: var(--color-primary-accent);
+}
+
+#file-drop-area input[type="file"] {
+    display: none; /* Hide the actual file input */
+}
+
+#file-drop-area label {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--color-primary);
+    transition: color 0.3s ease-in-out;
+}
+
+#file-drop-area label:hover {
+    color: var(--color-primary-accent);
+}
+
 footer {
     margin-top: auto;
     text-align: center;
