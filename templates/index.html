@@ -28,10 +28,10 @@
                 {% csrf_token %}
                 <h3 class="text-center">Drop your report here or click to upload!</h3>
                 <div id="file-drop-area">
-                    <input type="file" name="file" id="file" accept=".pdf" required>
+                    <input type="file" name="file" id="file" accept=".pdf" required onchange="handleFileUpload(event)">
                     <label for="file">Choose a PDF or Drag it Here</label>
                 </div>
-                
+                <p id="file-feedback" class="text-center" style="color: var(--color-primary-accent); display: none;"></p>
                 <button type="submit">Upload</button>
             </form>   
             
@@ -48,4 +48,42 @@
         <img src="{% static 'icon/leaf flipped.png' %}" alt="leafs" width="300px">
     </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropArea = document.getElementById('file-drop-area');
+            const fileInput = document.getElementById('file');
+            const feedback = document.getElementById('file-feedback');
+
+            dropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropArea.style.borderColor = 'var(--color-primary-accent)';
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = 'var(--color-secondary)';
+            });
+
+            dropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropArea.style.borderColor = 'var(--color-secondary)';
+
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.name.endsWith('.pdf')) {
+                        fileInput.files = files;
+                        feedback.style.color = 'var(--color-primary-accent)';
+                        feedback.textContent = `File "${file.name}" is ready to upload.`;
+                    } else {
+                        feedback.style.color = 'red';
+                        feedback.textContent = 'Invalid file type. Please upload a PDF.';
+                    }
+                    feedback.style.display = 'block';
+                }
+            });
+        });
+    </script>
 {% endblock %}
