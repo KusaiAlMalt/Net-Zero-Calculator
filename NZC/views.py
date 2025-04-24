@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from calculator1 import *
 
 
 # Create your views here.
@@ -32,10 +33,15 @@ def results(request):
 
         elif request.POST.get('scope1') and request.POST.get('scope2') and request.POST.get('scope3') and request.POST.get('profit'):
             
-            scopes = [request.POST.get('scope1'), request.POST.get('scope2'), request.POST.get('scope3')]
-            profit = request.POST.get('profit')
+            data = {
+                'scope1': int(request.POST.get('scope1')), 
+                'scope2': int(request.POST.get('scope2')), 
+                'scope3': int(request.POST.get('scope3')),
+                'profit': int(request.POST.get('profit'))
+                }
             
-            results = f"you selected {scopes[0]} and {scopes[1]} and {scopes[2]} and profit {profit}, and you should reduce your carbon footprint by x and y"
+            
+            results = get_results(data)
             context = {
                 'results': results
             }
