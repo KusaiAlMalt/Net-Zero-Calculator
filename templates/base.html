@@ -9,21 +9,30 @@
     {% block title %}
     {% endblock %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'icon/leaf.png' %}">
 </head>
 <body>
     
     <header>
-        <h1>Net Zero Calculator</h1>
+        <a href="/" id = "logo">
+            <h1>Net Zero Calculator</h1>
+        </a>
     </header>
     <nav>
-        <a href="about" class="text">About Us</a>
+        <a href="about" class="text-clickable">About Us</a>
     </nav>
+    
+    <main>
+        <hr>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-    {% block content %}
-    {% endblock %}
-
-    <hr>
     <footer>
-        <p>&copy; 2025 Net Zero Calculator <a href="about">About</a></p>
+        <hr>
+        <p>&copy; 2025 Net Zero Calculator <a href="about" class="text-clickable"><small>About</small></a></p>
     </footer>
 </body>
+
+{% block scripts %}
+{% endblock %}

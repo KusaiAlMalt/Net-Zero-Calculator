@@ -1,14 +1,17 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     <title>Net Zero Calculator</title>
 {% endblock %}
 
 {% block content %}
-    <h3>Welcome to the Net Zero Calculator!</h3>
-    <p> Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
-    
-    <hr>
+    <div>
+        <h3>Welcome to the Net Zero Calculator!</h3>
+        <p> Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
+        <p>To get started, please upload your PDF report or click the button below for manual data input.</p>
+        <hr>
+    </div>
 
     {% for message in messages %}
         {{ message }}
@@ -16,15 +19,87 @@
         
     
     <!-- PDF upload form -->
-    <h3>Drop your report here!</h3>
-    <form action="results" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="file">Choose a PDF:</label>
-        <input type="file" name="file" id="file" accept=".pdf" required>
-        <button type="submit">Upload</button>
-    </form>
+    <div class="container-row">
+        <img src="{% static 'icon/leaf.png' %}" alt="leafs" width="300px">
+        
+        <div class="middle-col">
+            
+            <form action="results" method="POST" enctype="multipart/form-data" class="text-center" id="file-upload-form">
+                {% csrf_token %}
+                <h3 class="text-center">Drop your report here or click to upload!</h3>
+                <div id="file-drop-area">
+                    <input type="file" name="file" id="file" accept=".pdf" required onchange="handleFileUpload(event)">
+                    <label for="file">Choose a PDF or Drag it Here</label>
+                </div>
+                <p id="file-feedback" class="text-center" style="color: var(--color-primary-accent); display: none;"></p>
+                <button type="submit">Upload</button>
+            </form>   
+            
+            
+            <div class="text-center">
+                <!-- Manual data input form -->
+                <h3>Click here for manual data input:</h3>
+                <a href="manual"><button type="submit">Manual data input</button></a>
+            
+            </div>
 
-    <!-- Manual data input form -->
-    <h3>Click here for manual data input:</h3>
-    <a href="manual"><button type="submit">Manual data input</button></a>
+        </div>
+        
+        <img src="{% static 'icon/leaf flipped.png' %}" alt="leafs" width="300px">
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropArea = document.getElementById('file-drop-area');
+            const fileInput = document.getElementById('file');
+            const feedback = document.getElementById('file-feedback');
+
+            function validateFile(file) {
+                if (file) {
+                    if (file.name.endsWith('.pdf')) {
+                        feedback.style.color = 'var(--color-primary-accent)';
+                        feedback.textContent = `File "${file.name}" is ready to upload.`;
+                    } else {
+                        feedback.style.color = 'red';
+                        feedback.textContent = 'Invalid file type. Please upload a PDF.';
+                        fileInput.value = '';
+                    }
+                    feedback.style.display = 'block';
+                } else {
+                    feedback.style.display = 'none';
+                }
+            }
+
+            // Handle drag-and-drop events
+            dropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropArea.style.borderColor = 'var(--color-primary-accent)';
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = 'var(--color-secondary)';
+            });
+
+            dropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropArea.style.borderColor = 'var(--color-secondary)';
+
+                const files = event.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    fileInput.files = files;
+                    validateFile(file);
+                }
+            });
+
+            // Handle file input change event
+            fileInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                validateFile(file);
+            });
+        });
+    </script>
 {% endblock %}
