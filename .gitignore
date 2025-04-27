@@ -421,3 +421,21 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# New .env added
+.env
+
+# New __pycache__ added
+__pycache__/
+
+# New *.pyc added
+*.pyc
+
+# New venv added
+venv/
+
+# New .env.local added
+.env.local
+
+# New .env.*.local added
+.env.*.local

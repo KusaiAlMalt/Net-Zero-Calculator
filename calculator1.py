@@ -43,7 +43,7 @@ def calculate_net_zero_cost(data, cc_method):
 
     total_emissions = scope1 + scope2 + scope3
     cost_to_offset = total_emissions * cc_method['cost_per_ton']
-    percentage = (cost_to_offset / revenue) * 100
+    percentage = (cost_to_offset / (revenue*1000000)) * 100
 
     return {
         "method": cc_method["name"],

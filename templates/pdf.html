@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Upload PDF for Analysis</h2>
+    
+    <form id="pdf-upload-form" method="post" action="{% url 'results' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="pdfFile" class="form-label">Select PDF File</label>
+            <input type="file" class="form-control" id="pdfFile" name="file" accept=".pdf" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" id="upload-btn">Upload and Analyze</button>
+        <div id="loading-spinner" class="spinner-border text-primary ms-3" style="display:none; vertical-align: middle;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </form>
+    
+    <div class="mt-4">
+        <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
+        <a href="{% url 'manual' %}" class="btn btn-secondary">Try Manual Input</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('pdf-upload-form').addEventListener('submit', function() {
+        document.getElementById('upload-btn').disabled = true;
+        document.getElementById('loading-spinner').style.display = 'inline-block';
+    });
+</script>
+{% endblock %} 

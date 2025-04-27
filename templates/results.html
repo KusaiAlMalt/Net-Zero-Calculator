@@ -1,10 +1,173 @@
 {% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
 {% block title %}
-    <title>Net Zero Calcualtor - Results</title>
+    <title>Analysis Results</title>
 {% endblock %}
-    
+
 {% block content %}
-    <h3>Results</h3>
-    <p>{{ results }}</p>
-    <a href="/"><button>Back to Home</button></a>
+    <div class="container">
+        <h2>Analysis Results</h2>
+        
+        {% if results %}
+            <div class="results-section">
+                <h3 style="color: #000;">Extracted Information</h3>
+                <div class="analysis-content">
+                    {{ results|linebreaks }}
+                </div>
+            </div>
+
+            {% if text_sample %}
+                <div class="results-section">
+                    <h3 style="color: #000;">Sample of Extracted Text</h3>
+                    <div class="text-sample">
+                        <pre>{{ text_sample }}</pre>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if relevant_contexts %}
+                <div class="results-section">
+                    <h3 style="color: #000;">Relevant Contexts</h3>
+                    <div class="contexts">
+                        {% for context in relevant_contexts %}
+                            <div class="context-item">
+                                <pre>{{ context }}</pre>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="results-section">
+                <h3 style="color: #000;">Popular Carbon Dioxide Removal Methods</h3>
+                <img src="{% static 'icon/CCS_Methods.png' %}" alt="CCS Methods" style="max-width:100%; height:auto; border-radius:8px; margin-bottom:20px;">
+                <p>
+                    The image shows different techniques for removing carbon dioxide from the atmosphere. Below you see what it would cost your company to reach net zero with these methods, based on your Scope 1, 2, and 3 emissions.
+                </p>
+            </div>
+
+            {% if costs_per_method %}
+                <div class="results-section">
+                    <h3 style="color: #000;">Net Zero Cost per Method in TSEK</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Price/ton (SEK)</th>
+                                <th>Scope 1</th>
+                                <th>Scope 2</th>
+                                <th>Scope 3</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for method, costs in costs_per_method.items %}
+                            <tr>
+                                <td>{{ method }}</td>
+                                <td>
+                                    {% with price=price_per_ton|get_item:method %}
+                                        {% if price %}
+                                            {{ price.0 }}–{{ price.1 }}
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td>{{ costs.scope1.0 }}–{{ costs.scope1.1 }}</td>
+                                <td>{{ costs.scope2.0 }}–{{ costs.scope2.1 }}</td>
+                                <td>{{ costs.scope3.0 }}–{{ costs.scope3.1 }}</td>
+                                <td><b>{{ costs.total.0 }}–{{ costs.total.1 }}</b></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="error-message">
+                <p>No results available. Please try again.</p>
+            </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="/" class="btn">Back to Home</a>
+            <a href="/manual" class="btn">Try Manual Input</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .analysis-content {
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .text-sample, .context-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-accent);
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .results-section, .results-section * {
+            color: #111 !important;
+        }
+        .table {
+            color: #111 !important;
+            background: #fff;
+        }
+
+        .table th, .table td {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            text-align: center;
+        }
+    </style>
 {% endblock %}
