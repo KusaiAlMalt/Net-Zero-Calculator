@@ -19,6 +19,8 @@ try:
     # Hämta och skriv ut det aktuella priset
     price = price_element.text
     print(f"Nuvarande pris: {price}")
+    with open("emmisssonrights_price.txt", "w") as f:
+            f.write(str(price))
 except Exception as e:
     print(f"Fel vid hämtning av pris: {e}")
 finally:
