@@ -18,6 +18,9 @@ def pdf(request):
 def manual(request):
     return render(request, 'manual.html', {"scopes" : [1,2,3]})
 
+def supplier_map(request):
+    return render(request, 'map.html')
+
 def results(request):
     context = {}  # Initialize context as empty dictionary
     

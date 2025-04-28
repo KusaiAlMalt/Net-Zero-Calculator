@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    <title>Net Zero Calculator - Supplier Map</title>
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+{% endblock %}
+
+{% block content %}
+    <div class="container-center">
+        <h2>Carbon Removal Suppliers Map</h2>
+        <p>This map shows locations of carbon dioxide removal suppliers around the world.</p>
+        
+        <div id="map" style="width: 100%; height: 500px; border-radius: 10px; margin: 20px 0;"></div>
+        
+        <a href="/"><button>Back to Home</button></a>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Make sure to load Leaflet JS after the page is loaded -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map
+            var map = L.map('map').setView([20, 0], 2);
+            
+            // Add a base map layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Load the supplier data from a static JSON file
+            fetch('{% static "suppliers.json" %}')
+                .then(response => response.json())
+                .then(data => {
+                    // Add markers for each supplier with location data
+                    data.forEach(supplier => {
+                        if (supplier.latitude && supplier.longitude) {
+                            var marker = L.marker([supplier.latitude, supplier.longitude]).addTo(map);
+                            marker.bindPopup(`
+                                <strong>${supplier.name}</strong><br>
+                                Method: ${supplier.method}<br>
+                                Tons Delivered: ${supplier.tons_delivered}<br>
+                                Tons Sold: ${supplier.tons_sold}
+                            `);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading supplier data:', error));
+        });
+    </script>
+{% endblock %}
