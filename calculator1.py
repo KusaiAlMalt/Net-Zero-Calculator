@@ -5,12 +5,6 @@ import os
 # vet ej hur datan från alla scopes & resultat ser ut men enkelt att ändra kan göra for-loop istället liks
 # app = FastAPI()
 
-cc_methods = {
-    'dac': {'name': 'Direct Air Capture', 'cost_per_ton': 500}, # teoretisk data just nu kan vara nice att utöka med kostnadsdata från nätet
-    'biochar': {'name': 'Biochar', 'cost_per_ton': 100},
-    'reforestation': {'name': 'Reforestation', 'cost_per_ton': 50}
-}
-
 def get_results(data):
     # data är redan ett dict med scope1, scope2, scope3, profit
     return {
