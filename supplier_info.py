@@ -21,7 +21,7 @@ wait = WebDriverWait(driver, 15)
 # Wait for the table to load initially
 wait.until(EC.presence_of_element_located((By.TAG_NAME, "table")))
 
-all_dfs = []
+all_data = []
 
 for page in range(1, 20):  # Pages 1 through 19
     print(f"📄 Scraping page {page}...")
@@ -40,14 +40,36 @@ for page in range(1, 20):  # Pages 1 through 19
 
     # Grab the updated table
     soup = BeautifulSoup(driver.page_source, "html.parser")
-    table_html = str(soup.find("table"))
-    df = pd.read_html(table_html)[0]
-    all_dfs.append(df)
+    table = soup.find("table")
+    rows = table.find("tbody").find_all("tr")
+
+    for row in rows:
+        cols = row.find_all("td")
+        if not cols:
+            continue
+
+        # Hämta vanlig text från kolumnerna
+        row_data = [col.get_text(strip=True) for col in cols]
+
+        # Hämta länken från <a>-taggen istället för "View"
+        view_link_tag = row.find("a", string="View")
+        if view_link_tag:
+            relative_link = view_link_tag.get("href")
+            row_data[-1] = "https://www.cdr.fyi" + relative_link  # Ersätt sista kolumnen (View) med hela länken
+        else:
+            row_data[-1] = None
+
+        all_data.append(row_data)
 
 # Done
 driver.quit()
 
-# Save result
-final_df = pd.concat(all_dfs, ignore_index=True)
-final_df.to_csv("cdr_suppliers_full.csv", index=False)
-print("✅ All 19 pages scraped and saved to 'cdr_suppliers_full.csv'")
+# Definiera kolumnerna
+columns = ['Name', 'Tons Delivered', 'Tons Sold', 'Method', 'CDR_Link']
+
+# Skapa DataFrame
+final_df = pd.DataFrame(all_data, columns=columns)
+
+# Spara som CSV
+final_df.to_csv("cdr_suppliers_with_links.csv", index=False)
+print("✅ All 19 pages scraped and saved to 'cdr_suppliers_with_links.csv'")
