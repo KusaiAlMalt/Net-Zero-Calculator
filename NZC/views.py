@@ -4,6 +4,8 @@ from calculator1 import *
 from .pdf_analyzer import extract_info_from_pdf
 import math
 import os
+import pandas as pd
+from django.conf import settings
 
 openai_enabled = os.getenv("OPENAI_API_KEY") is not None
 
@@ -69,12 +71,20 @@ def results(request):
                     costs_per_method = {}
                     price_per_ton = {}
                     for method, (low, high) in removal_methods.items():
+                        total_low = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * low * 10 / 1_000)
+                        total_high = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * high * 10 / 1_000)
+                        profit_tsek = data['profit'] * 1000 if isinstance(data['profit'], (int, float)) and data['profit'] != 0 else None
+                        if profit_tsek:
+                            percent_low = round((total_low / profit_tsek) * 100, 1) if total_low else "-"
+                            percent_high = round((total_high / profit_tsek) * 100, 1) if total_high else "-"
+                        else:
+                            percent_low = percent_high = "-"
                         costs_per_method[method] = {
                             'scope1': (math.ceil(data['scope1'] * low * 10 / 1_000), math.ceil(data['scope1'] * high * 10 / 1_000)),
                             'scope2': (math.ceil(data['scope2'] * low * 10 / 1_000), math.ceil(data['scope2'] * high * 10 / 1_000)),
                             'scope3': (math.ceil(data['scope3'] * low * 10 / 1_000), math.ceil(data['scope3'] * high * 10 / 1_000)),
-                            'total': (math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * low * 10 / 1_000),
-                                      math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * high * 10 / 1_000))
+                            'total': (total_low, total_high),
+                            'profit_total_percent': (percent_low, percent_high)
                         }
                         price_per_ton[method] = (low * 10, high * 10)  # SEK per ton
                     context = {
@@ -116,12 +126,20 @@ def results(request):
             costs_per_method = {}
             price_per_ton = {}
             for method, (low, high) in removal_methods.items():
+                total_low = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * low * 10 / 1_000)
+                total_high = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * high * 10 / 1_000)
+                profit_tsek = data['profit'] * 1000 if isinstance(data['profit'], (int, float)) and data['profit'] != 0 else None
+                if profit_tsek:
+                    percent_low = round((total_low / profit_tsek) * 100, 1) if total_low else "-"
+                    percent_high = round((total_high / profit_tsek) * 100, 1) if total_high else "-"
+                else:
+                    percent_low = percent_high = "-"
                 costs_per_method[method] = {
                     'scope1': (math.ceil(data['scope1'] * low * 10 / 1_000), math.ceil(data['scope1'] * high * 10 / 1_000)),
                     'scope2': (math.ceil(data['scope2'] * low * 10 / 1_000), math.ceil(data['scope2'] * high * 10 / 1_000)),
                     'scope3': (math.ceil(data['scope3'] * low * 10 / 1_000), math.ceil(data['scope3'] * high * 10 / 1_000)),
-                    'total': (math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * low * 10 / 1_000),
-                              math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * high * 10 / 1_000))
+                    'total': (total_low, total_high),
+                    'profit_total_percent': (percent_low, percent_high)
                 }
                 price_per_ton[method] = (low * 10, high * 10)  # SEK per ton
             context['costs_per_method'] = costs_per_method
@@ -135,3 +153,29 @@ def results(request):
         
     context['openai_enabled'] = openai_enabled
     return render(request, 'results.html', context)
+
+def ccs_methods(request):
+    csv_path = os.path.join(settings.BASE_DIR, 'cdr_suppliers_with_links_and_company.csv')
+    df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()  # Tar bort eventuella mellanslag
+
+    methods = [
+        "Biochar Carbon Removal (BCR)",
+        "Enhanced Weathering",
+        "Ex-situ Mineralization",
+        "Direct Air Carbon Capture and Storage (DACCS)",
+        "Bioenergy with Carbon Capture and Storage (BECCS)"
+    ]
+
+    method_tables = {}
+    for method in methods:
+        suppliers = df[df['Method'] == method][['Name', 'Tons Delivered', 'Tons Sold', 'Company_Link']].to_dict(orient='records')
+        method_tables[method] = suppliers
+
+    columns = ['Name', 'Tons Delivered', 'Tons Sold', 'Company_Link']
+
+    context = {
+        'method_tables': method_tables,
+        'columns': columns,
+    }
+    return render(request, 'ccs_methods.html', context)
