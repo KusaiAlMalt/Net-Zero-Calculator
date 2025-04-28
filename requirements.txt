@@ -8,3 +8,8 @@ langchain-text-splitters
 langchain-community
 faiss-cpu
 pandas
+selenium
+webdriver-manager
+matplotlib
+seaborn
+beautifulsoup4

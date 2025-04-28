@@ -9,21 +9,53 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
+    <style>
+        #map-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        #map {
+            height: 600px;
+            width: 100%;
+            border-radius: 10px;
+        }
+        
+        .filter-controls {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: var(--color-bg);
+            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
     <div class="container-center">
         <h2>Carbon Removal Suppliers Map</h2>
-        <p>This map shows locations of carbon dioxide removal suppliers around the world.</p>
+        <p>This map shows the locations of carbon dioxide removal suppliers worldwide.</p>
         
-        <div id="map" style="width: 100%; height: 500px; border-radius: 10px; margin: 20px 0;"></div>
+        <div class="filter-controls">
+            <button id="show-all" class="method-filter active">Show All Methods</button>
+            <div id="method-filter-buttons">
+                <!-- Method filter buttons will be added here dynamically -->
+            </div>
+        </div>
+        
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
         
         <a href="/"><button>Back to Home</button></a>
     </div>
 {% endblock %}
 
 {% block scripts %}
-    <!-- Make sure to load Leaflet JS after the page is loaded -->
+    <!-- Load Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
@@ -38,24 +70,179 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
             
-            // Load the supplier data from a static JSON file
+            // Variables to store markers and methods
+            var markers = [];
+            var methodFilters = {};
+            
+            // Function to create a pin marker with colored icon
+            function createPinMarker(lat, lng, color, name) {
+                // Create a custom icon with the specified color
+                var customIcon = L.divIcon({
+                    className: 'custom-pin',
+                    html: `<svg width="24" height="36" viewBox="0 0 24 36" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="${color}" stroke="#000" stroke-width="1" d="M12 0C5.383 0 0 5.383 0 12c0 6.617 12 24 12 24s12-17.383 12-24C24 5.383 18.617 0 12 0z"/>
+                            <circle fill="#fff" cx="12" cy="12" r="5"/>
+                          </svg>`,
+                    iconSize: [24, 36],
+                    iconAnchor: [12, 36],
+                    popupAnchor: [0, -36]
+                });
+                
+                return L.marker([lat, lng], { icon: customIcon, title: name });
+            }
+            
+            // Load the supplier data from the JSON file
             fetch('{% static "suppliers.json" %}')
                 .then(response => response.json())
                 .then(data => {
-                    // Add markers for each supplier with location data
+                    // Process each supplier
                     data.forEach(supplier => {
-                        if (supplier.latitude && supplier.longitude) {
-                            var marker = L.marker([supplier.latitude, supplier.longitude]).addTo(map);
-                            marker.bindPopup(`
-                                <strong>${supplier.name}</strong><br>
-                                Method: ${supplier.method}<br>
-                                Tons Delivered: ${supplier.tons_delivered}<br>
-                                Tons Sold: ${supplier.tons_sold}
-                            `);
+                        // Create a marker with the appropriate color
+                        var marker = createPinMarker(
+                            supplier.latitude, 
+                            supplier.longitude, 
+                            supplier.color,
+                            supplier.name
+                        ).addTo(map);
+                        
+                        // Create popup content
+                        var popupContent = `
+                            <strong>${supplier.name}</strong><br>
+                            Method: ${supplier.method}<br>
+                            Tons Delivered: ${supplier.tons_delivered}<br>
+                            Tons Sold: ${supplier.tons_sold}
+                        `;
+                        
+                        // Add company link if available
+                        if (supplier.company_link) {
+                            popupContent += `<br><a href="${supplier.company_link}" target="_blank">Company Website</a>`;
+                        }
+                        
+                        marker.bindPopup(popupContent);
+                        
+                        // Store marker with its method for filtering
+                        marker.method = supplier.method;
+                        markers.push(marker);
+                        
+                        // Track methods for filters
+                        if (!methodFilters[supplier.method]) {
+                            methodFilters[supplier.method] = true;
                         }
                     });
+                    
+                    // Create method filter buttons
+                    createMethodFilters(methodFilters);
                 })
-                .catch(error => console.error('Error loading supplier data:', error));
+                .catch(error => {
+                    console.error('Error loading supplier data:', error);
+                    document.getElementById('map').innerHTML = 
+                        '<div style="padding: 20px; text-align: center;">Error loading map data. Please try again later.</div>';
+                });
+            
+            // Function to create method filter buttons
+            function createMethodFilters(methodFilters) {
+                const filterContainer = document.getElementById('method-filter-buttons');
+                
+                // Create a button for each method
+                Object.keys(methodFilters).sort().forEach(method => {
+                    const btn = document.createElement('button');
+                    btn.className = 'method-filter';
+                    btn.textContent = method;
+                    btn.dataset.method = method;
+                    
+                    btn.addEventListener('click', function() {
+                        // Toggle active state
+                        this.classList.toggle('active');
+                        const showAll = document.getElementById('show-all');
+                        
+                        // If this button is now active, deactivate "Show All"
+                        if (this.classList.contains('active')) {
+                            showAll.classList.remove('active');
+                        }
+                        
+                        // Update which markers are shown
+                        updateVisibleMarkers();
+                    });
+                    
+                    filterContainer.appendChild(btn);
+                });
+                
+                // Add event listener to "Show All" button
+                document.getElementById('show-all').addEventListener('click', function() {
+                    this.classList.add('active');
+                    
+                    // Deactivate all method buttons
+                    document.querySelectorAll('.method-filter[data-method]').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Show all markers
+                    updateVisibleMarkers();
+                });
+            }
+            
+            // Function to update which markers are visible based on filters
+            function updateVisibleMarkers() {
+                const showAllActive = document.getElementById('show-all').classList.contains('active');
+                const activeFilters = [];
+                
+                // If "Show All" is active, show all markers
+                if (showAllActive) {
+                    markers.forEach(marker => marker.addTo(map));
+                    return;
+                }
+                
+                // Otherwise, collect active filters
+                document.querySelectorAll('.method-filter[data-method].active').forEach(btn => {
+                    activeFilters.push(btn.dataset.method);
+                });
+                
+                // If no filters active, default to "Show All"
+                if (activeFilters.length === 0) {
+                    document.getElementById('show-all').classList.add('active');
+                    markers.forEach(marker => marker.addTo(map));
+                    return;
+                }
+                
+                // Apply filters
+                markers.forEach(marker => {
+                    if (activeFilters.includes(marker.method)) {
+                        marker.addTo(map);
+                    } else {
+                        marker.remove();
+                    }
+                });
+            }
         });
     </script>
+    
+    <style>
+        /* Additional styles for filter buttons */
+        .method-filter {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            border: 1px solid var(--color-secondary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .method-filter:hover {
+            border-color: var(--color-primary);
+        }
+        
+        .method-filter.active {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+        
+        /* Custom pin marker style */
+        .custom-pin {
+            background: transparent;
+            border: none;
+        }
+    </style>
 {% endblock %}
