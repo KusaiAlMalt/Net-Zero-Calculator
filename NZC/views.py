@@ -3,20 +3,22 @@ from django.contrib import messages
 from calculator1 import *
 from .pdf_analyzer import extract_info_from_pdf
 import math
+import os
 
+openai_enabled = os.getenv("OPENAI_API_KEY") is not None
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'index.html', {'openai_enabled': openai_enabled})
 
 def about(request):
-    return render(request, 'about.html')
+    return render(request, 'about.html', {'openai_enabled': openai_enabled})
 
 def pdf(request):
-    return render(request, 'pdf.html')
+    return render(request, 'pdf.html', {'openai_enabled': openai_enabled})
 
 def manual(request):
-    return render(request, 'manual.html', {"scopes" : [1,2,3]})
+    return render(request, 'manual.html', {"scopes" : [1,2,3], 'openai_enabled': openai_enabled})
 
 def results(request):
     context = {}  # Initialize context as empty dictionary
@@ -131,4 +133,5 @@ def results(request):
         messages.error(request, 'Please submit data first')
         return redirect('index')
         
+    context['openai_enabled'] = openai_enabled
     return render(request, 'results.html', context)
