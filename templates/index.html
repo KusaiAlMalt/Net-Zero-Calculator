@@ -55,6 +55,13 @@
 {% endblock %}
 
 {% block scripts %}
+    <style>
+        @media (max-width: 750px) {
+            img {
+                display: none;
+            }
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const dropArea = document.getElementById('file-drop-area');
