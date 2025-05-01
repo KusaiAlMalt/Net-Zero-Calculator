@@ -15,30 +15,32 @@
         <div class="results-section" style="margin-bottom: 40px;">
             <h3>{{ method }}</h3>
             {% if suppliers %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            {% for col in columns %}
-                                <th>{{ col }}</th>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                {% for col in columns %}
+                                    <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in suppliers %}
+                            <tr>
+                                {% for col in columns %}
+                                    {% if col == "CDR_Link" or col == "Company_Link" %}
+                                        <td>
+                                            <a href="{{ row|get_item:col }}" target="_blank">Link</a>
+                                        </td>
+                                    {% else %}
+                                        <td>{{ row|get_item:col }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
                             {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in suppliers %}
-                        <tr>
-                            {% for col in columns %}
-                                {% if col == "CDR_Link" or col == "Company_Link" %}
-                                    <td>
-                                        <a href="{{ row|get_item:col }}" target="_blank">Link</a>
-                                    </td>
-                                {% else %}
-                                    <td>{{ row|get_item:col }}</td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             {% else %}
                 <p>No suppliers found for this method.</p>
             {% endif %}
@@ -117,12 +119,30 @@
         .table {
             color: #111 !important;
             background: #fff;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .table th, .table td {
             padding-left: 24px !important;
             padding-right: 24px !important;
             text-align: center;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--color-secondary);
         }
+
+        .table-container {
+            overflow-x: auto; 
+            width: 100%;
+        }
+
+        @media (max-width: 750px) {
+            .table th, .table td {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+        }
+        
     </style>
 {% endblock %}
