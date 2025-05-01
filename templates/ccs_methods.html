@@ -51,3 +51,78 @@
     </div>
 </div>
 {% endblock %}
+{% block scripts %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .analysis-content {
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .text-sample, .context-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-accent);
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .results-section, .results-section * {
+            color: #111 !important;
+        }
+        .table {
+            color: #111 !important;
+            background: #fff;
+        }
+
+        .table th, .table td {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
