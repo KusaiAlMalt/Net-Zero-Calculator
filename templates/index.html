@@ -24,16 +24,20 @@
         
         <div class="middle-col">
             
-            <form action="results" method="POST" enctype="multipart/form-data" class="text-center" id="file-upload-form">
-                {% csrf_token %}
-                <h3 class="text-center">Drop your report here or click to upload!</h3>
-                <div id="file-drop-area">
-                    <input type="file" name="file" id="file" accept=".pdf" required onchange="handleFileUpload(event)">
-                    <label for="file">Choose a PDF or Drag it Here</label>
-                </div>
-                <p id="file-feedback" class="text-center" style="color: var(--color-primary-accent); display: none;"></p>
-                <button type="submit">Upload</button>
-            </form>   
+            {% if openai_enabled %}
+                <form action="results" method="POST" enctype="multipart/form-data" class="text-center" id="file-upload-form">
+                    {% csrf_token %}
+                    <h3 class="text-center">Drop your report here or click to upload!</h3>
+                    <div id="file-drop-area">
+                        <input type="file" name="file" id="file" accept=".pdf" required onchange="handleFileUpload(event)">
+                        <label for="file">Choose a PDF or Drag it Here</label>
+                    </div>
+                    <p id="file-feedback" class="text-center" style="color: var(--color-primary-accent); display: none;"></p>
+                    <button type="submit">Upload</button>
+                </form>   
+            {% else %}
+                <p style="color: red;">PDF-upload is closed because no OpenAI API-key was given.</p>
+            {% endif %}
             
             
             <div class="text-center">
@@ -43,6 +47,12 @@
             
             </div>
 
+            <form action="results" method="GET" class="text-center" id=id>
+                <h3>Enter ID to fetch old calculated data:</h3>
+                <input type="number" name="id" id="id" placeholder="Enter ID">
+                <button type="submit">Fetch</button>
+            </form>
+
         </div>
         
         <img src="{% static 'icon/leaf flipped.png' %}" alt="leafs" width="300px">
@@ -51,6 +61,13 @@
 {% endblock %}
 
 {% block scripts %}
+    <style>
+        @media (max-width: 750px) {
+            img {
+                display: none;
+            }
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const dropArea = document.getElementById('file-drop-area');

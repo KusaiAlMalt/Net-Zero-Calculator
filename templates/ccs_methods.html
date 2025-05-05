@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}
+    <title>CCS Methods - Suppliers</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>CCS Methods - Supplier Overview</h2>
+    <p>Below you find all suppliers grouped by method, based on <code>cdr_supliers_full.csv</code>.</p>
+
+    {% for method, suppliers in method_tables.items %}
+        <div class="results-section" style="margin-bottom: 40px;">
+            <h3>{{ method }}</h3>
+            {% if suppliers %}
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                {% for col in columns %}
+                                    <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in suppliers %}
+                            <tr>
+                                {% for col in columns %}
+                                    {% if col == "CDR_Link" or col == "Company_Link" %}
+                                        <td>
+                                            <a href="{{ row|get_item:col }}" target="_blank">Link</a>
+                                        </td>
+                                    {% else %}
+                                        <td>{{ row|get_item:col }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p>No suppliers found for this method.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <div class="action-buttons">
+        <a href="/" class="btn">Back to Home</a>
+        <a href="{% url 'results' %}?id={{ result_id }}" class="btn">Back to Results</a>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .results-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .analysis-content {
+            white-space: pre-wrap;
+            font-family: monospace;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .text-sample, .context-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--color-primary-accent);
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .results-section, .results-section * {
+            color: #111 !important;
+        }
+        .table {
+            color: #111 !important;
+            background: #fff;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            text-align: center;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--color-secondary);
+        }
+
+        .table-container {
+            overflow-x: auto; 
+            width: 100%;
+        }
+
+        @media (max-width: 750px) {
+            .table th, .table td {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+        }
+        
+    </style>
+{% endblock %}

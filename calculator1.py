@@ -5,25 +5,14 @@ import os
 # vet ej hur datan från alla scopes & resultat ser ut men enkelt att ändra kan göra for-loop istället liks
 # app = FastAPI()
 
-cc_methods = {
-    'dac': {'name': 'Direct Air Capture', 'cost_per_ton': 500}, # teoretisk data just nu kan vara nice att utöka med kostnadsdata från nätet
-    'biochar': {'name': 'Biochar', 'cost_per_ton': 100},
-    'reforestation': {'name': 'Reforestation', 'cost_per_ton': 50}
-}
-
 def get_results(data):
-    dac = calculate_net_zero_cost(data, cc_methods['dac'])
-    result_string = (
-        f"You selected the method: {dac['method']}, "
-        f"with Scope 1: {dac['scope1']} tCO₂e, "
-        f"Scope 2: {dac['scope2']} tCO₂e, and "
-        f"Scope 3: {dac['scope3']} tCO₂e. "
-        f"Total emissions: {dac['total_emissions']} tCO₂e. "
-        f"The cost to offset these emissions is {dac['cost_to_offset']} SEK, "
-        f"which is {dac['percentage_of_revenue']}% of your revenue."
-    )
-
-    return result_string
+    # data är redan ett dict med scope1, scope2, scope3, profit
+    return {
+        "scope1": data.get("scope1", "-"),
+        "scope2": data.get("scope2", "-"),
+        "scope3": data.get("scope3", "-"),
+        "profit": data.get("profit", "-")
+    }
 
 
 

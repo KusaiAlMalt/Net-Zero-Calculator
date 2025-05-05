@@ -8,15 +8,77 @@
 
 {% block content %}
     <div class="container">
-        <h2>Analysis Results</h2>
+        <h2>Analysis Results (ID: {{result_id}})</h2>
         
         {% if results %}
             <div class="results-section">
                 <h3 style="color: #000;">Extracted Information</h3>
                 <div class="analysis-content">
-                    {{ results|linebreaks }}
+                    <table style="margin:0; border:none; background:transparent; font-size:1.1em;">
+                        <tr>
+                            <th style="text-align:left; padding-right:1em;">Scope 1:</th>
+                            <td>{{ results.scope1|default:"-" }} tCO₂e</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align:left; padding-right:1em;">Scope 2:</th>
+                            <td>{{ results.scope2|default:"-" }} tCO₂e</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align:left; padding-right:1em;">Scope 3:</th>
+                            <td>{{ results.scope3|default:"-" }} tCO₂e</td>
+                        </tr>
+                        <tr>
+                            <th style="text-align:left; padding-right:1em;">Profit before tax:</th>
+                            <td>{{ results.profit|default:"-" }} MSEK</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
+            {% if costs_per_method %}
+                <div class="results-section">
+                    <h3 style="color: #000;">Net Zero Cost per Method in TSEK</h3>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Price/ton (SEK)</th>
+                                    <th>Scope 1</th>
+                                    <th>Scope 2</th>
+                                    <th>Scope 3</th>
+                                    <th>Total Cost</th>
+                                    <th>Profit/Total Cost (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for method, costs in costs_per_method.items %}
+                                <tr>
+                                    <td>{{ method }}</td>
+                                    <td>
+                                        {% with price=price_per_ton|get_item:method %}
+                                            {% if price %}
+                                                {{ price.0 }}–{{ price.1 }}
+                                            {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                    <td>{{ costs.scope1.0 }}–{{ costs.scope1.1 }}</td>
+                                    <td>{{ costs.scope2.0 }}–{{ costs.scope2.1 }}</td>
+                                    <td>{{ costs.scope3.0 }}–{{ costs.scope3.1 }}</td>
+                                    <td><b>{{ costs.total.0 }}–{{ costs.total.1 }}</b></td>
+                                    <td>
+                                        {% if costs.profit_total_percent.0 != '-' and costs.profit_total_percent.1 != '-' %}
+                                            {{ costs.profit_total_percent.0 }}–{{ costs.profit_total_percent.1 }}%
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
 
             {% if text_sample %}
                 <div class="results-section">
@@ -47,42 +109,6 @@
                     The image shows different techniques for removing carbon dioxide from the atmosphere. Below you see what it would cost your company to reach net zero with these methods, based on your Scope 1, 2, and 3 emissions.
                 </p>
             </div>
-
-            {% if costs_per_method %}
-                <div class="results-section">
-                    <h3 style="color: #000;">Net Zero Cost per Method in TSEK</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Method</th>
-                                <th>Price/ton (SEK)</th>
-                                <th>Scope 1</th>
-                                <th>Scope 2</th>
-                                <th>Scope 3</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for method, costs in costs_per_method.items %}
-                            <tr>
-                                <td>{{ method }}</td>
-                                <td>
-                                    {% with price=price_per_ton|get_item:method %}
-                                        {% if price %}
-                                            {{ price.0 }}–{{ price.1 }}
-                                        {% endif %}
-                                    {% endwith %}
-                                </td>
-                                <td>{{ costs.scope1.0 }}–{{ costs.scope1.1 }}</td>
-                                <td>{{ costs.scope2.0 }}–{{ costs.scope2.1 }}</td>
-                                <td>{{ costs.scope3.0 }}–{{ costs.scope3.1 }}</td>
-                                <td><b>{{ costs.total.0 }}–{{ costs.total.1 }}</b></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
         {% else %}
             <div class="error-message">
                 <p>No results available. Please try again.</p>
@@ -91,7 +117,8 @@
 
         <div class="action-buttons">
             <a href="/" class="btn">Back to Home</a>
-            <a href="/manual" class="btn">Try Manual Input</a>
+            <a href="/manual" class="btn">Enter Manual Input</a>
+            <a href="/ccs_methods?id={{result_id}}" class="btn">Check CCS Methods</a>
         </div>
     </div>
 {% endblock %}
@@ -162,12 +189,30 @@
         .table {
             color: #111 !important;
             background: #fff;
+            width: 100%;
+            border-collapse: collapse;
         }
 
         .table th, .table td {
             padding-left: 24px !important;
             padding-right: 24px !important;
             text-align: center;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--color-secondary);
         }
+
+        .table-container {
+            overflow-x: auto; 
+            width: 100%;
+        }
+
+        @media (max-width: 750px) {
+            .table th, .table td {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+        }
+        
     </style>
 {% endblock %}
