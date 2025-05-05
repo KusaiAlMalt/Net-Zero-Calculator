@@ -1,17 +1,94 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>Net Zero Calcualtor - About Us</title>
+    <title>Net Zero Calculator - About Us</title>
 {% endblock %}
 
 {% block content %}
-    <h1>What is Net Zero Calcualtor?</h1>
-    <p>To add text here</p>
-    <h1>How to use it?</h1>
-    <p>To add text here</p>
-    <h1>How does it work?</h1>
-    <p>To add text here</p>
-    <h1>Who are behind Net Zero Calcualtor?</h1>
-    <p>To add text here</p>
-    <a href="/"><button>Back to Home</button></a>
+    
+    <div class="box-container">
+        <div class="feature-box">
+            <h2>What is Net Zero Calculator?</h2>
+            <p>Your carbon-neutral journey starts here. The Net Zero Calculator is an AI-powered solution that provides your company with early estimation of what it takes to offset your organization's carbon footprint. We analyze your day-to-day emissions and connect you with verified carbon capture projects worldwide, making sustainability both accessible and actionable.</p>
+        </div>
+        
+        <div class="feature-box">
+            <h2>How to use it?</h2>
+            <p>Getting started is simple! Upload your latest environmental report or any document containing your organization's emissions data, then click "Calculate." Our advanced algorithm instantly analyzes your carbon footprint and provides a comprehensive cost estimate for achieving carbon neutrality. Prefer manual entry? You can also input your data directly into our user-friendly interface.</p>
+            <p>Our interactive supplier map lets you explore verified carbon capture projects worldwide. Browse initiatives using cutting-edge sequestration technologies, filter by location or capture method, and find the perfect match for your sustainability goals. Once you've discovered a suitable project, seamlessly navigate to the supplier's profile for an accurate, tailored cost estimation.</p>
+        </div>
+        
+        <div class="feature-box">
+            <h2>Who are behind Net Zero Calculator?</h2>
+            <p>The Net Zero Calculator was developed by a team of six ambitious engineering students at Chalmers University of Technology as part of their Agile Project Management coursework. Combining expertise in software development, environmental science, and user experience design, we've created this tool to make carbon neutrality more accessible for organizations of all size. We hope you enjoy the application.</p>
+            <p>/Kusai, Felix, Linus, Samuel, Andy and Marcel</p>
+        </div>
+    </div>
+    
+    
+    <style>
+        .box-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        
+        .feature-box {
+            background-color: #317E3D;
+            color: white;
+            border-radius: 10px;
+            padding: 25px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            min-height: 320px; /* Increased height */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Add smooth transition */
+        }
+        
+        /* Hover effect */
+        .feature-box:hover {
+            background-color: #3A9549; /* Lighter green when hovering */
+            transform: translateY(-8px); /* Slight lift effect */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow for more depth */
+        }
+        
+        .feature-box h2 {
+            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-box p {
+            flex-grow: 1;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        
+        .box-button {
+            background-color: white;
+            color: #333;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            cursor: pointer;
+            margin: 0 auto;
+            width: fit-content;
+            font-size: 16px;
+        }
+        
+        /* For mobile responsiveness */
+        @media (max-width: 768px) {
+            .box-container {
+                flex-direction: column;
+            }
+            
+            .feature-box {
+                min-height: auto;
+                padding-bottom: 30px;
+            }
+        }
+    </style>
 {% endblock %}
