@@ -211,6 +211,7 @@ def results(request):
     return render(request, 'results.html', context)
 
 def ccs_methods(request):
+    result_id = request.GET.get('id')
     csv_path = os.path.join(settings.BASE_DIR, 'cdr_suppliers_with_links_and_company.csv')
     df = pd.read_csv(csv_path)
     df.columns = df.columns.str.strip()  # Tar bort eventuella mellanslag
@@ -233,5 +234,6 @@ def ccs_methods(request):
     context = {
         'method_tables': method_tables,
         'columns': columns,
+        'result_id' : result_id,
     }
     return render(request, 'ccs_methods.html', context)
