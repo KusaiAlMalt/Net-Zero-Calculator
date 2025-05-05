@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block content %}
-    <div>
+    <div class="welcome-section">
         <h3>Welcome to the Net Zero Calculator!</h3>
-        <p> Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
+        <p>Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.</p>
         <p>To get started, please upload your PDF report or click the button below for manual data input.</p>
         <hr>
     </div>
@@ -58,6 +58,26 @@
         <img src="{% static 'icon/leaf flipped.png' %}" alt="leafs" width="300px">
     </div>
 
+    <style>
+        .welcome-section {
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-section h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 15px auto;
+            max-width: 800px;
+        }
+    </style>
 {% endblock %}
 
 {% block scripts %}
