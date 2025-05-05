@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .models import Result
 from calculator1 import *
 from .pdf_analyzer import extract_info_from_pdf
 import math
@@ -152,6 +153,18 @@ def results(request):
         return redirect('index')
         
     context['openai_enabled'] = openai_enabled
+
+    # save results to database
+    result = Result(
+        scope1=data['scope1'],
+        scope2=data['scope2'],
+        scope3=data['scope3'],
+        profit=data['profit'],
+        pdfname=pdf_file.name if request.FILES.get('file') else None,
+        email=None
+    )
+    result.save()
+    context["result_id"] =  result.id
     return render(request, 'results.html', context)
 
 def ccs_methods(request):
