@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from .models import Result
 from calculator1 import *
 from .pdf_analyzer import extract_info_from_pdf
@@ -23,9 +24,9 @@ def pdf(request):
 def manual(request):
     return render(request, 'manual.html', {"scopes" : [1,2,3], 'openai_enabled': openai_enabled})
 
-def results(request):
+def results(request):   
     context = {}  # Initialize context as empty dictionary
-    
+
     # Exempel på kostnadsintervall (du kan lägga till fler eller ändra)
     removal_methods = {
         'Direct Air Capture': (100, 345),      # Cost in U.S. dollars per ton of CO₂
@@ -35,8 +36,49 @@ def results(request):
         'BECCS': (15, 400),
         'Soil carbon sequestration': (45, 100)
     }
-    
-    if request.method == 'POST':
+
+    if request.method == 'GET':
+        result_id = request.GET.get('id')
+        if result_id:
+            result_object = get_object_or_404(Result, id=result_id)
+            data = {
+                'scope1': result_object.scope1,
+                'scope2': result_object.scope2,
+                'scope3': result_object.scope3,
+                'profit': result_object.profit
+            }
+            results = get_results(data)
+            context = {
+                'results': results
+            }
+
+            # Beräkna kostnader per metod
+            costs_per_method = {}
+            price_per_ton = {}
+            for method, (low, high) in removal_methods.items():
+                total_low = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * low * 10 / 1_000)
+                total_high = math.ceil((data['scope1'] + data['scope2'] + data['scope3']) * high * 10 / 1_000)
+                profit_tsek = data['profit'] * 1000 if isinstance(data['profit'], (int, float)) and data['profit'] != 0 else None
+                if profit_tsek:
+                    percent_low = round((total_low / profit_tsek) * 100, 1) if total_low else "-"
+                    percent_high = round((total_high / profit_tsek) * 100, 1) if total_high else "-"
+                else:
+                    percent_low = percent_high = "-"
+                costs_per_method[method] = {
+                    'scope1': (math.ceil(data['scope1'] * low * 10 / 1_000), math.ceil(data['scope1'] * high * 10 / 1_000)),
+                    'scope2': (math.ceil(data['scope2'] * low * 10 / 1_000), math.ceil(data['scope2'] * high * 10 / 1_000)),
+                    'scope3': (math.ceil(data['scope3'] * low * 10 / 1_000), math.ceil(data['scope3'] * high * 10 / 1_000)),
+                    'total': (total_low, total_high),
+                    'profit_total_percent': (percent_low, percent_high)
+                }
+                price_per_ton[method] = (low * 10, high * 10)  # SEK per ton
+            context['costs_per_method'] = costs_per_method
+            context['price_per_ton'] = price_per_ton
+        else:
+            messages.error(request, f'ID: {result_id} does not exist')
+            return redirect('index')
+
+    elif request.method == 'POST':
         if request.FILES.get('file'):
             pdf_file = request.FILES.get('file')
 
@@ -148,23 +190,24 @@ def results(request):
         else:
             messages.error(request, 'Missing required data')
             return redirect('index')
+        # save results to database
+        result_object = Result(
+            scope1=data['scope1'],
+            scope2=data['scope2'],
+            scope3=data['scope3'],
+            profit=data['profit'],
+            pdfname=pdf_file.name if request.FILES.get('file') else None,
+            email=None
+        )
+        result_object.save()
     else:
         messages.error(request, 'Please submit data first')
         return redirect('index')
         
     context['openai_enabled'] = openai_enabled
-
-    # save results to database
-    result = Result(
-        scope1=data['scope1'],
-        scope2=data['scope2'],
-        scope3=data['scope3'],
-        profit=data['profit'],
-        pdfname=pdf_file.name if request.FILES.get('file') else None,
-        email=None
-    )
-    result.save()
-    context["result_id"] =  result.id
+    
+    
+    context["result_id"] =  result_object.id
     return render(request, 'results.html', context)
 
 def ccs_methods(request):
