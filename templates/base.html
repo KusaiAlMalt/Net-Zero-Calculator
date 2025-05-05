@@ -9,7 +9,8 @@
     {% block title %}
     {% endblock %}
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    <link rel="icon" type="image/png" href="{% static 'icon/leaf.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'icon/leaf.png' %}">  
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
     
@@ -20,6 +21,7 @@
     </header>
     <nav>
         <a href="about" class="text-clickable">About Us</a>
+        <a href="map" class="text-clickable">Supplier Map</a>
     </nav>
     
     <main>

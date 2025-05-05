@@ -24,7 +24,11 @@ def pdf(request):
 def manual(request):
     return render(request, 'manual.html', {"scopes" : [1,2,3], 'openai_enabled': openai_enabled})
 
-def results(request):   
+def supplier_map(request):
+    return render(request, 'map.html')
+
+def results(request):
+
     context = {}  # Initialize context as empty dictionary
 
     # Exempel på kostnadsintervall (du kan lägga till fler eller ändra)

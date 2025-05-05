@@ -7,5 +7,6 @@ urlpatterns = [
     path('pdf', views.pdf, name='pdf'),
     path('manual', views.manual, name='manual'),
     path('results', views.results, name='results'),
+    path('map', views.supplier_map, name='map'),
     path('ccs_methods', views.ccs_methods, name='ccs_methods'),
 ]
