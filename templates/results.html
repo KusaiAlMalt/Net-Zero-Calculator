@@ -8,7 +8,7 @@
 
 {% block content %}
     <div class="container">
-        <h2>Analysis Results</h2>
+        <h2>Analysis Results (ID: {{result_id}})</h2>
         
         {% if results %}
             <div class="results-section">
@@ -118,7 +118,7 @@
         <div class="action-buttons">
             <a href="/" class="btn">Back to Home</a>
             <a href="/manual" class="btn">Enter Manual Input</a>
-            <a href="/ccs_methods" class="btn">Check CCS Methods</a>
+            <a href="/ccs_methods?id={{result_id}}" class="btn">Check CCS Methods</a>
         </div>
     </div>
 {% endblock %}
