@@ -1,12 +1,13 @@
-# from fastapi import FastAPI, File, UploadFile, Form
-# from fastapi.responses import JSONResponse
-import shutil
-import os
-# vet ej hur datan från alla scopes & resultat ser ut men enkelt att ändra kan göra for-loop istället liks
-# app = FastAPI()
-
 def get_results(data):
-    # data är redan ett dict med scope1, scope2, scope3, profit
+    """
+    Generate a dictionary of results based on input data.
+
+    Args:
+        data (dict): A dictionary containing keys "scope1", "scope2", "scope3", and "profit".
+
+    Returns:
+        dict: A dictionary with the same keys as the input, defaulting to "-" if a key is missing.
+    """    
     return {
         "scope1": data.get("scope1", "-"),
         "scope2": data.get("scope2", "-"),
@@ -14,17 +15,26 @@ def get_results(data):
         "profit": data.get("profit", "-")
     }
 
-
-
-def extract_emissions_from_pdf(file_path):
-    return {
-        "scope1": 12000,
-        "scope2": 8000,
-        "scope3": 15000,
-        "revenue": 5_000_000
-    }
-
 def calculate_net_zero_cost(data, cc_method):
+    """
+    Calculate the cost of achieving net zero emissions using a specific carbon capture method.
+
+    Args:
+        data (dict): A dictionary containing "scope1", "scope2", "scope3", and "profit".
+        cc_method (dict): A dictionary containing the carbon capture method details, including:
+            - "name" (str): The name of the carbon capture method.
+            - "cost_per_ton" (float): The cost per ton of carbon removal.
+
+    Returns:
+        dict: A dictionary containing:
+            - "method" (str): The name of the carbon capture method.
+            - "scope1" (int): Emissions from scope 1.
+            - "scope2" (int): Emissions from scope 2.
+            - "scope3" (int): Emissions from scope 3.
+            - "total_emissions" (int): The total emissions from all scopes.
+            - "cost_to_offset" (float): The total cost to offset the emissions.
+            - "percentage_of_revenue" (float): The percentage of revenue required to offset emissions.
+    """
     scope1 = data.get("scope1", 0)
     scope2 = data.get("scope2", 0)
     scope3 = data.get("scope3", 0)
@@ -44,21 +54,3 @@ def calculate_net_zero_cost(data, cc_method):
         "percentage_of_revenue": round(percentage, 2)
         
     }
-
-# @app.post("/upload")
-# async def upload_pdf(file: UploadFile = File(...), method: str = Form(...)):
-#     temp_path = f"temp_{file.filename}"
-#     with open(temp_path, "wb") as f:
-#         shutil.copyfileobj(file.file, f)
-
-#     try:
-#         extracted_data = extract_emissions_from_pdf(temp_path)
-#         selected_method = cc_methods.get(method)
-
-#         if not selected_method:
-#             return JSONResponse(status_code=400, content={"error": "Invalid method"})
-
-#         result = calculate_net_zero_cost(extracted_data, selected_method)
-#         return JSONResponse(content=result)
-#     finally:
-#         os.remove(temp_path)

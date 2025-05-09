@@ -28,10 +28,18 @@ def supplier_map(request):
     return render(request, 'map.html')
 
 def results(request):
+    """
+    Handle requests to the results page.
 
-    context = {}  # Initialize context as empty dictionary
+    For GET requests:
+        - Fetch and display results for a specific result ID.
 
-    # Exempel på kostnadsintervall (du kan lägga till fler eller ändra)
+    For POST requests:
+        - Process uploaded PDF or manual input data.
+        - Perform calculations and save results to the database.
+    """
+    context = {}
+
     removal_methods = {
         'Direct Air Capture': (100, 345),      # Cost in U.S. dollars per ton of CO₂
         'Biochar': (10, 345),
@@ -56,7 +64,7 @@ def results(request):
                 'results': results
             }
 
-            # Beräkna kostnader per metod
+            # Calculate costs per method
             costs_per_method = {}
             price_per_ton = {}
             for method, (low, high) in removal_methods.items():
@@ -95,7 +103,6 @@ def results(request):
                 analysis_results = extract_info_from_pdf(pdf_file)
                 extracted_values = analysis_results['extracted_values']
                 
-                # Sätt defaultvärden till '-' om de saknas
                 data = {
                     'scope1': extracted_values.get('scope1', '-'),
                     'scope2': extracted_values.get('scope2', '-'),
@@ -103,18 +110,15 @@ def results(request):
                     'profit': extracted_values.get('profit', '-')
                 }
 
-                # Om alla scope-värden är siffror, kör beräkning och visa tabell
+                # If all scopes are numbers, calculate and show tabel
                 if all(isinstance(data[k], int) or (isinstance(data[k], str) and data[k].isdigit()) for k in ['scope1', 'scope2', 'scope3']):
-                    # Konvertera strängar till int om det behövs
                     for k in ['scope1', 'scope2', 'scope3']:
                         if isinstance(data[k], str):
                             data[k] = int(data[k])
-                    # profit kan vara '-' så vi hanterar den separat
                     if isinstance(data['profit'], str) and data['profit'].isdigit():
                         data['profit'] = int(data['profit'])
                     results = get_results(data)
 
-                    # Beräkna kostnader per metod
                     costs_per_method = {}
                     price_per_ton = {}
                     for method, (low, high) in removal_methods.items():
@@ -169,7 +173,6 @@ def results(request):
                 'results': results
             }
 
-            # Beräkna kostnader per metod
             costs_per_method = {}
             price_per_ton = {}
             for method, (low, high) in removal_methods.items():
@@ -194,6 +197,7 @@ def results(request):
         else:
             messages.error(request, 'Missing required data')
             return redirect('index')
+        
         # save results to database
         result_object = Result(
             scope1=data['scope1'],
@@ -218,7 +222,7 @@ def ccs_methods(request):
     result_id = request.GET.get('id')
     csv_path = os.path.join(settings.BASE_DIR, 'cdr_suppliers_with_links_and_company.csv')
     df = pd.read_csv(csv_path)
-    df.columns = df.columns.str.strip()  # Tar bort eventuella mellanslag
+    df.columns = df.columns.str.strip()
 
     methods = [
         "Biochar Carbon Removal (BCR)",

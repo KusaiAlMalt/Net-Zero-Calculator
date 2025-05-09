@@ -11,20 +11,20 @@ options = Options()
 options.add_argument("--headless")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Läs in CSV-filen som redan har CDR_Link
+# Read the CSV file that already contains CDR_Link
 df = pd.read_csv("cdr_suppliers_with_links.csv")
 
-# Skapa en lista för att lagra nya data
+# Create a list to store new data
 company_links = []
 
-# Funktion för att hämta Company Link från en CDR-Link
+# Function to fetch the Company Link from a CDR-Link
 def fetch_company_link(cdr_link):
     driver.get(cdr_link)
-    time.sleep(2)  # Vänta för att sidan ska ladda ordentligt
+    time.sleep(2)  # Wait for the page to load properly
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
     
-    # Hämta företagslänken baserat på den specifika klassen (eller andra attribut)
+    # Fetch the company link based on the specific class (or other attributes)
     try:
         company_link_tag = soup.find("a", class_="text-muted-foreground")
         company_link = company_link_tag.get("href") if company_link_tag else "N/A"
@@ -35,7 +35,7 @@ def fetch_company_link(cdr_link):
     
     return company_link
 
-# Loopa genom alla CDR_link och hämta Company_Link
+# Loop through all CDR_Link entries and fetch the Company_Link
 for index, row in df.iterrows():
     cdr_link = row['CDR_Link']
     if cdr_link:
@@ -45,12 +45,12 @@ for index, row in df.iterrows():
         company_link = "N/A"
     company_links.append(company_link)
 
-# Lägg till Company_Link som en ny kolumn i DataFrame
+# Add Company_Link as a new column in the DataFrame
 df['Company_Link'] = company_links
 
-# Stäng webbläsaren
+# Close the browser
 driver.quit()
 
-# Spara den uppdaterade DataFrame till en ny CSV-fil
+# Save the updated DataFrame to a new CSV file
 df.to_csv("cdr_suppliers_with_links_and_company.csv", index=False)
 print("✅ All data scraped and saved to 'cdr_suppliers_with_links_and_company.csv'")

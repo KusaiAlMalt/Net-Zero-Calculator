@@ -1,3 +1,10 @@
+"""
+pdf_analyzer.py
+
+This module provides functions for extracting text and tables from PDFs, creating vector stores,
+and analyzing the extracted text using GPT to extract specific data.
+"""
+
 import pdfplumber
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
@@ -7,6 +14,7 @@ from dotenv import load_dotenv
 import openai
 import json
 
+# Load environment variables
 load_dotenv()
 
 # Initialize OpenAI client and embeddings
@@ -14,7 +22,15 @@ client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 embeddings = OpenAIEmbeddings()
 
 def extract_text_from_pdf(pdf_file):
-    """Extrahera text och tabeller från PDF"""
+    """
+    Extract text and tables from a PDF file.
+
+    Args:
+        pdf_file (str or file-like object): The path to the PDF file or a file-like object.
+
+    Returns:
+        str: A string containing the extracted text and tables, cleaned and concatenated.
+    """
     full_text = []
     tables_text = []
     
@@ -35,7 +51,15 @@ def extract_text_from_pdf(pdf_file):
     return all_text
 
 def create_vector_store(text):
-    """Skapa FAISS-vectorstore från text"""
+    """
+    Create a FAISS vector store from the given text.
+
+    Args:
+        text (str): The text to be split into chunks and embedded.
+
+    Returns:
+        FAISS: A FAISS vector store containing the text chunks and their embeddings.
+    """
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=700,
         chunk_overlap=400,
@@ -47,7 +71,16 @@ def create_vector_store(text):
     return FAISS.from_texts(chunks, embeddings)
 
 def analyze_with_gpt(context):
-    """Analysera extraherad text med GPT och returnera JSON"""
+    """
+    Analyze extracted text using GPT and return structured data in JSON format.
+
+    Args:
+        context (str): The text to be analyzed by GPT.
+
+    Returns:
+        dict or None: A dictionary containing extracted values (e.g., Scope 1, Scope 2, Scope 3 emissions, and profit),
+                      or None if the analysis fails.
+    """
     prompt = f"""
 Analysera text från en årsredovisning på svenska eller engelska och extrahera:
 
@@ -97,7 +130,18 @@ Text att analysera:
         return None
 
 def extract_info_from_pdf(pdf_file):
-    """Huvudfunktion: extrahera och analysera PDF"""
+    """
+    Main function to extract and analyze information from a PDF file.
+
+    Args:
+        pdf_file (str or file-like object): The path to the PDF file or a file-like object.
+
+    Returns:
+        dict: A dictionary containing:
+            - 'extracted_values': Extracted Scope 1, Scope 2, Scope 3 emissions, and profit.
+            - 'text_sample': A sample of the extracted text.
+            - 'relevant_contexts': Relevant contexts used for analysis.
+    """
     text = extract_text_from_pdf(pdf_file)
     vectordb = create_vector_store(text)
     
