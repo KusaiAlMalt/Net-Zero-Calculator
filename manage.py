@@ -3,7 +3,7 @@
 import os
 import sys
 
-openai_enabled = os.getenv("OPENAI_API_KEY") is not None
+#openai_enabled = os.getenv("OPENAI_API_KEY") is not None
 
 def main():
     """Run administrative tasks."""

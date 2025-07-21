@@ -18,8 +18,8 @@ import json
 load_dotenv()
 
 # Initialize OpenAI client and embeddings
-client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-embeddings = OpenAIEmbeddings()
+#client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+#embeddings = OpenAIEmbeddings()
 
 def extract_text_from_pdf(pdf_file):
     """
