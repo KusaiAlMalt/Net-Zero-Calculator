@@ -5,6 +5,9 @@ This project is a web-application that uses OpenAI to analyze emissions and give
 
 This project was even used by team members in their bachelor thesis.
 
+What I learned from this project:
+TODO
+
 # Net Zero Calculator
 Your journey to a sustainable future starts here. This tool helps your business understand its climate impact by analyzing emissions and offering tailored insights. Make informed, sustainable decisions and take real steps toward net zero. Let's build a thriving future together.
 
