@@ -5,7 +5,7 @@ This project is a web-application that uses OpenAI API to analyze emissions (eit
 
 This project was even used by team members in their bachelor thesis.
 
-> Please note that the OpenAI needs a key to operate, since we are done with this project and passed the course, the OpanAI feature won't work since the balance for the API key have been used. However you can still try the manual input feature if you ever try it locally.
+> Please note that the OpenAI needs an API key to operate, since we are done with this project and passed the course, the OpanAI feature won't work since the balance for the API key have been used. However you can still try the manual input feature if you ever try it locally.
 
 ## What I learned from this project:
 TODO
