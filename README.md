@@ -5,7 +5,7 @@ This project is a web-application that uses OpenAI to analyze emissions and give
 
 This project was even used by team members in their bachelor thesis.
 
-What I learned from this project:
+## What I learned from this project:
 TODO
 
 # Net Zero Calculator
